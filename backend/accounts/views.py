@@ -76,7 +76,7 @@ class SendOtp(View):
 
         cache.set(f'otp_{email_address}', request.session['otp'], 300)
 
-        body = f'the otp >> {request.session['otp']} and incase you forgot, your username is {user.username}'
+        body = f"the otp >> {request.session['otp']} and incase you forgot, your username is {user.username}"
         send_mail(
             'Password reset',
             body,
