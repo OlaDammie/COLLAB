@@ -9,14 +9,14 @@ from django.core.cache import cache
 
 # Create your views here.
 class HomePageView(View):
-    template_name = 'home.html'
+    template_name = 'accounts/home.html'
 
     def get(self, request):
 
         return render(request, self.template_name)
     
 class SignUpView(View):
-    template_name = 'signup.html'
+    template_name = 'accounts/signup.html'
 
     def get(self, request):
         return render(request, self.template_name)
@@ -36,7 +36,7 @@ class SignUpView(View):
             return redirect('accounts:login')
 
 class Login(View):
-    template_name = 'login.html'
+    template_name = 'accounts/login.html'
 
     def get(self, request):
         return render(request, self.template_name)
@@ -59,7 +59,7 @@ class Logout(View):
         return redirect('accounts:home')
 
 class SendOtp(View):
-    template_name = 'send_otp.html'
+    template_name = 'accounts/send_otp.html'
 
     def get(self, request):
         otp = generate_otp()
@@ -87,13 +87,13 @@ class SendOtp(View):
         return redirect('accounts:otp_check')
     
 class Done(View):
-    template_name = 'done_send.html'
+    template_name = 'accounts/done_send.html'
 
     def get(self, request):
         return render(request, self.template_name)
     
 class Check(View):
-    template_name = 'check.html'
+    template_name = 'accounts/check.html'
 
     def get(self, request):
         return render(request, self.template_name)
