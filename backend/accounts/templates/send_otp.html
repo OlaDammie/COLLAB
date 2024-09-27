@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load cache %}
+
+{% block content %}
+<h1>reset your password</h1>
+
+<h2>Get otp via mail</h2>
+
+<form action="" method="post">
+    {% csrf_token %}
+
+    <label for="email">Enter email address: </label>
+    <input type="email" name="email_address" id="" placeholder="@gmail.com">
+    <br><br>
+
+    <input type="submit" value="Submit">
+
+</form>
+
+{% endblock content %}
