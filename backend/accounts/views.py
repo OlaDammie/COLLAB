@@ -27,7 +27,9 @@ class SignUpView(View):
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
        
-        if password != confirm_password:
+        if User.objects.filter(email=email).exists():
+            return redirect('accounts:signup')
+        elif password != confirm_password:
             return redirect('accounts:signup')
         else:
             request.session['username'] = username #this place might not be needed
