@@ -26,7 +26,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '*.onrender.com', 'notesapp-2.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '*.onrender.com', 'notesapp-final.onrender.com']
 
 
 # Application definition
