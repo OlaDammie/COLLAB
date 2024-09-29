@@ -4,7 +4,7 @@ from .views import HomePageView, SignUpView, Login, Logout, Done, SendOtp, Check
 app_name = 'accounts'
 
 urlpatterns = [
-    path('home/', HomePageView.as_view(), name='home'),
+    path('', HomePageView.as_view(), name='home'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),

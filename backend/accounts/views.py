@@ -108,6 +108,6 @@ class Check(View):
         
         if cached_otp and otp_checker == cached_otp:
             # valid otp
-            return redirect('accounts:done')
+            return redirect('accounts:login')
         else:
             return redirect('accounts:otp_check')
