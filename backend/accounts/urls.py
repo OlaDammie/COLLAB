@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomePageView, SignUpView, Login, Logout, Done, SendOtp, Check
+from .views import HomePageView, SignUpView, Login, Logout, Done, SendOtp, Check, Password_reset
 
 app_name = 'accounts'
 
@@ -11,5 +11,5 @@ urlpatterns = [
     path('done/', Done.as_view(), name='done'),
     path('send_otp/', SendOtp.as_view(), name='send_otp'),
     path('otp_check/', Check.as_view(), name='otp_check'),
-    # path('change_password/', Password_reset.as_view(), name='change_password'),
+    path('change_password/', Password_reset.as_view(), name='change_password'),
 ]

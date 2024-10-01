@@ -102,6 +102,7 @@ class Check(View):
     
     def post(self, request):
         email = request.POST['email']
+        request.session['email_for_reset'] = email
         otp_checker = request.POST['otp_checker']
 
         cached_otp = cache.get(f'otp_{email}')
@@ -111,3 +112,26 @@ class Check(View):
             return redirect('accounts:login')
         else:
             return redirect('accounts:otp_check')
+        
+class Password_reset(View):
+
+    template_name = "accounts/password_reset.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+    
+    def post(self, request):
+        email = request.POST['email']
+        new_password = request.POST['reset']
+
+        check_email = request.session['email_for_reset']
+
+        if check_email == email:
+            reset = User.objects.get(email=email)
+            reset.set_password(new_password)
+            reset.save()
+            messages.success(request, f"Successfully changes password!")
+            return redirect('accounts:login')
+        else:
+            messages.success(request, f"Emails don't match!")
+            return redirect('accounts:change_password')
