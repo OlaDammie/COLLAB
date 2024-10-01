@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -6,14 +6,24 @@ from django.contrib import messages
 from .utility import generate_otp
 from django.core.mail import send_mail
 from django.core.cache import cache
+from .models import Note
+from . forms import AddNote
+from django.db.models import Q
+
 
 # Create your views here.
 class HomePageView(View):
     template_name = 'accounts/home.html'
 
     def get(self, request):
+        notes = Note.objects.filter(archive=False, trash=False)
+        form = AddNote(request.POST or None)
+        context = {
+            'notes': notes, 
+            'form': form
+            }
 
-        return render(request, self.template_name)
+        return render(request, self.template_name, context)
     
 class SignUpView(View):
     template_name = 'accounts/signup.html'
@@ -109,7 +119,7 @@ class Check(View):
         
         if cached_otp and otp_checker == cached_otp:
             # valid otp
-            return redirect('accounts:login')
+            return redirect('accounts:change_password')
         else:
             return redirect('accounts:otp_check')
         
@@ -135,3 +145,77 @@ class Password_reset(View):
         else:
             messages.success(request, f"Emails don't match!")
             return redirect('accounts:change_password')
+
+def search_function(request):
+    q = request.GET.get('q', '')  # Get 'q' from request.GET, default to an empty string if not present
+    if q != '':
+        multiple_q = Q(Q(title__icontains=q) | Q(body__icontains=q))
+        notes = Note.objects.filter(multiple_q)
+    else:
+        notes = Note.objects.filter(archive=False, trash=False)
+    return render(request, 'accounts/search_results.html', {'notes': notes, 'query': q})
+
+def save_note(request):
+    form = AddNote(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+                form.save()
+                return redirect('accounts:home')
+    
+    else:
+        messages.error(request, 'You must be logged in to add a record')
+        return redirect('accounts:home')
+    # return render(request, 'home.html', {'form': form})
+
+
+
+# Archive a specific note
+def archive_note_view(request, pk):
+    notes = get_object_or_404(Note, id=pk)
+    notes.archive = True
+    notes.save()
+    messages.success(request, 'note archived')
+    return redirect('accounts:archive_page')
+
+#displaying the archive page
+def archive_page_view(request):
+    archived_notes = Note.objects.filter(archive=True, trash=False)
+    
+    return render(request, 'accounts/archive.html', {'notes': archived_notes})
+
+#unarchive fuctionality   
+def unarchive_note_view(request, pk):
+    note = get_object_or_404(Note, id=pk)
+    note.archive = False
+    note.save()
+    messages.success(request, 'note unarchived')
+    return redirect('accounts:home')  # Redirect to the archive page
+
+#trash fuctionality   
+def trash_note(request, pk):
+    note = Note.objects.get(id=pk)
+    note.trash = True
+    note.save()
+    messages.success(request, 'note sent to trash')
+    return redirect('accounts:trash_page') 
+
+def untrash_note(request, pk):
+    note = Note.objects.get(id=pk)
+    note.trash = False
+    note.save()
+    messages.success(request, 'note restored from Trash')
+    return redirect('accounts:home') 
+
+#trash page view
+def trash_page_view(request):
+    trash_note = Note.objects.filter(trash=True, archive=False)
+    return render(request, 'accounts/trash.html', {'notes':trash_note})
+
+
+def delete_note_permanently(request, pk):
+    if request.method == 'POST':
+        delete_it = Note.objects.get(id=pk)
+        delete_it.delete()
+        return redirect('accounts:home')
+    
+
