@@ -59,7 +59,7 @@ class Login(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, f"Welcome {username}, enter your notes")
+            # messages.success(request, f"Welcome {username}, enter your notes")
             return redirect('accounts:home')
         else:
             return redirect('accounts:login')
